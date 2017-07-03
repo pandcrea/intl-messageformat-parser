@@ -74,12 +74,21 @@ elementFormat
     / selectFormat
 
 simpleFormat
-    = type:('number' / 'date' / 'time') _ style:(',' _ chars)? {
+    = type:('number' / 'date' / 'time') _ style:(skeletonDateFormat) {
         return {
             type : type + 'Format',
-            style: style && style[2],
-            location: location()
+            style: style.style,
+            location: location(),
+            skeleton: style.skeleton
         };
+    }
+
+skeletonDateFormat
+    = ',' _ style:(dateStyles)? skeleton:(chars)? {
+        return {
+            style: style || 'skeleton',
+            skeleton: skeleton
+        }
     }
 
 pluralFormat
@@ -155,7 +164,7 @@ number = digits:('0' / $([1-9] digit*)) {
 }
 
 char
-    = [^{}\\\0-\x1F\x7f \t\n\r]
+    = [^{}\\\0-\x1F\x7f\t\n\r]
     / '\\\\' { return '\\'; }
     / '\\#'  { return '\\#'; }
     / '\\{'  { return '\u007B'; }
@@ -165,3 +174,8 @@ char
     }
 
 chars = chars:char+ { return chars.join(''); }
+
+dateStyles
+    = 'full'
+    / 'long'
+    / 'short'
