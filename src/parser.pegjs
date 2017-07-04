@@ -84,7 +84,7 @@ simpleFormat
     }
 
 skeletonDateFormat
-    = ',' _ style:(dateStyles)? skeleton:(chars)? {
+    = ',' _ style:(dateStyles)? skeleton:(skeletonChars)? {
         return {
             style: style || 'skeleton',
             skeleton: skeleton
@@ -164,7 +164,7 @@ number = digits:('0' / $([1-9] digit*)) {
 }
 
 char
-    = [^{}\\\0-\x1F\x7f\t\n\r]
+    = [^{}\\\0-\x1F\x7f \t\n\r]
     / '\\\\' { return '\\'; }
     / '\\#'  { return '\\#'; }
     / '\\{'  { return '\u007B'; }
@@ -175,6 +175,9 @@ char
 
 chars = chars:char+ { return chars.join(''); }
 
+skeletonChars = [GyMdkHmsSEDFwWahKzYeugAZvcLQqVUOXxr\- ,]+ {
+    return text();
+}
 dateStyles
     = 'full'
     / 'long'
